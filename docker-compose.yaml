@@ -1,0 +1,48 @@
+version: '3'
+services:
+
+  postgresql:
+    image: 'postgres'
+    restart: always
+    volumes:
+      - postgresql-volume:/postgresql/data/recons
+    ports:
+      - "5432:5432"
+    command: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Pa55w0rd
+      POSTGRES_DB: recons
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d recons"  ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    networks:
+      - recons-network
+
+  recons:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    image: achdias/recons
+    restart: always
+    container_name: recons
+    ports:
+      - "8081:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgresql:5432/recons
+      DATABASE_USER: admin
+      DATABASE_PASSWORD: Pa55w0rd
+    networks:
+      - recons-network
+
+volumes:
+  postgresql-volume:
+
+networks:
+  recons-network:
+    driver: bridge
