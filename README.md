@@ -37,7 +37,6 @@ Recon Automation é uma API desenvolvida para automatizar o processo de reconhec
    ```bash
    docker-compose up --build
 Isso fará o build da API e inicializará o PostgreSQL no Docker. A API estará disponível em http://localhost:8080 e o banco de dados PostgreSQL em localhost:5432.
-Rotas da API
 
 ## Endpoints da API
 
