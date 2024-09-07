@@ -12,13 +12,18 @@ public class TransactionalContext {
     private EntityManager manager;
 
     @Transactional
-    public <T> T persist(T objeto) {
-        manager.persist(objeto);
-        return objeto;
+    public <T> T persist(T object) {
+        manager.persist(object);
+        return object;
     }
 
     @Transactional
-    public <T> T update(T objeto) {
-        return manager.merge(objeto);
+    public <T> T update(T object) {
+        return manager.merge(object);
+    }
+
+    @Transactional
+    public <T> void delete(T object) {
+        manager.remove(object);
     }
 }

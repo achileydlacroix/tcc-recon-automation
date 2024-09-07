@@ -1,40 +1,38 @@
 package br.com.tcc.achileydlacroix.reconautomation.domain.subdomain;
 
 import br.com.tcc.achileydlacroix.reconautomation.domain.Domain;
+import br.com.tcc.achileydlacroix.reconautomation.vulnerability.Vulnerability;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.Assert;
 
-import java.util.Objects;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 @Entity
 @Table(name = "subdomains")
 public class Subdomain {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotBlank
-    private String url;
+    private String address;
     @NotNull
     @ManyToOne
     private Domain domain;
-//    @OneToMany(mappedBy = "domain",cascade = CascadeType.MERGE)
-//    @OrderBy("firstSeen asc")
-//    private SortedSet<Vulnerability> vulnerabilities = new TreeSet<>();
+    @OneToMany(mappedBy = "subdomain",cascade = CascadeType.REMOVE)
+    private Set<Vulnerability> vulnerabilities = new HashSet<>();
 
     @Deprecated
     public Subdomain() {
     }
 
-    public Subdomain(@NotBlank String url) {
-        Assert.hasLength(url, "O campo url nao pode estar em branco");
+    public Subdomain(@NotBlank String address, @NotNull Domain domain) {
+        Assert.hasLength(address, "O campo address nao pode estar em branco");
+        Assert.notNull(domain, "O dominio nao pode ser nulo");
 
-        this.url = url;
+        this.address = address;
+        this.domain = domain;
     }
 
     @Override
@@ -50,21 +48,21 @@ public class Subdomain {
         return Objects.hashCode(id);
     }
 
-    public String getUrl() {
-        return url;
+    public Long getId() {
+        return id;
+    }
+
+    public String getAddress() {
+        return address;
     }
 
 
-    public Domain getHost() {
-        return domain;
+    public Set<Vulnerability> getVulnerabilities() {
+        return vulnerabilities;
     }
 
-//    public SortedSet<Vulnerability> getVulnerabilities() {
-//        return vulnerabilities;
-//    }
-//
-//    public void addVulnerabilities(@NotNull Vulnerability vulns){
-//        Assert.notNull(vulns, "O objeto vulnerability nao pode estar nulo");
-//        this.vulnerabilities.add(vulns);
-//    }
+    public void addVulnerabilities(@NotNull Vulnerability vulns){
+        Assert.notNull(vulns, "O objeto vulnerability nao pode estar nulo");
+        this.vulnerabilities.add(vulns);
+    }
 }

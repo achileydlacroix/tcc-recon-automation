@@ -1,41 +1,39 @@
 package br.com.tcc.achileydlacroix.reconautomation.domain;
 
 import br.com.tcc.achileydlacroix.reconautomation.domain.subdomain.Subdomain;
+import br.com.tcc.achileydlacroix.reconautomation.vulnerability.Vulnerability;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.util.Assert;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "domain")
+@Table(name = "domains")
 public class Domain {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotBlank
     @Size(max = 150)
-    private String url;
-    @NotBlank
-    @OneToMany(mappedBy = "domain", cascade = CascadeType.MERGE)
+    @Pattern(regexp = "^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+[a-zA-Z]{2,}$")
+    private String address;
+    @OneToMany(mappedBy = "domain", cascade = CascadeType.REMOVE)
     private Set<Subdomain> subdomains = new HashSet<>();
-//    @OneToMany(mappedBy = "domain",cascade = CascadeType.MERGE)
-//    @OrderBy("firstSeen asc")
-//    private SortedSet<Vulnerability> vulnerabilities = new TreeSet<>();
+    @OneToMany(mappedBy = "domain",cascade = CascadeType.REMOVE)
+    private Set<Vulnerability> vulnerabilities = new HashSet<>();
 
     @Deprecated
     public Domain() {
     }
 
-    public Domain(@NotBlank String url) {
-        Assert.hasLength(url, "O campo url nao pode estar em branco");
+    public Domain(@NotBlank String address) {
+        Assert.hasLength(address, "O campo address nao pode estar em branco");
 
-        this.url = url;
+        this.address = address;
     }
 
     @Override
@@ -51,30 +49,31 @@ public class Domain {
         return Objects.hashCode(id);
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getAddress() {
+        return address;
     }
-
 
     public Set<Subdomain> getSubdomains() {
         return subdomains;
     }
 
-//    public SortedSet<Vulnerability> getVulnerabilities() {
-//        return vulnerabilities;
-//    }
-//
-//    public void addVulnerabilities(@NotNull Vulnerability vulns){
-//        Assert.notNull(vulns, "O objeto vulnerability nao pode estar nulo");
-//        this.vulnerabilities.add(vulns);
-//    }
+    public Set<Vulnerability> getVulnerabilities() {
 
-    public void setSubdomains(Set<Subdomain> subdomains) {
-        this.subdomains = subdomains;
+        return vulnerabilities;
+    }
+
+    public void addVulnerabilities(@NotNull Vulnerability vulnerability){
+        Assert.notNull(vulnerability, "O objeto vulnerability nao pode estar nulo");
+        this.vulnerabilities.add(vulnerability);
+    }
+
+    public void addSubdomains(Subdomain subdomain) {
+        Assert.notNull(subdomain, "O objeto subdomain nao pode estar nulo");
+        this.subdomains.add(subdomain);
     }
 }
 

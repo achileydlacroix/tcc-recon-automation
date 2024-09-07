@@ -7,6 +7,5 @@ import java.util.Optional;
 
 @Repository
 public interface DomainRepository extends JpaRepository<Domain, Long> {
-    Optional<Domain> findByUrl(String url);
-
+    Optional<Domain> findByAddress(String address);
 }
