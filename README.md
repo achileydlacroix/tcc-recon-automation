@@ -24,7 +24,7 @@ Recon Automation é uma API desenvolvida para automatizar o processo de reconhec
 1. **Clone este repositório**:
 
    ```bash
-   git clone https://github.com/usuario/tcc-recon-automation.git
+   git clone https://github.com/achileydlacroix/tcc-recon-automation.git
    
 
    
